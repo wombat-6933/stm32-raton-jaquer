@@ -1,0 +1,27 @@
+Se necesita, por un lado, openocd para controlar la placa stm32f103. 
+Por otro lado, el gdb-multiarch con el programa executable.elf, que será cargado a través de este en la placa.
+
+comandos por pasos (en directorio stm32f1xx-esc/src):
+
+openocd -f interface/stlink.cfg -f ../openocd-scripts/target/stm32f1x_chino.cfg
+
+si todo bien despues:
+
+gdb-multiarch bin/executable.elf
+
+dentro de gdb:
+
+<gdb> target remote :3333
+// nos conectamos a la placa mediante el puerto abierto por openocd
+
+<gdb> monitor reset halt
+// tampoco es imprescindible es comando general para reiniciar el micro y pararlo justo al inicio.
+
+<gdb> load
+// carga el binario extraido del elf en la placa. Es muy listo este programin
+
+<gdb> monitor reset halt
+//reinicio otra vez y estamos listos para meter instrucciones como
+
+<gdb> n, continue, break .....
+//tener en cuenta que tras el halt se encuentra detenido el procesador
