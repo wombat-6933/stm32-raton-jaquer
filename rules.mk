@@ -37,7 +37,7 @@ CSTD ?= -std=c99
 
 # Be silent per default, but 'make V=1' will show all compiler calls.
 # If you're insane, V=99 will print out all sorts of things.
-V?=0
+V?=1
 ifeq ($(V),0)
 Q	:= @
 NULL	:= 2>/dev/null
@@ -112,6 +112,7 @@ LDLIBS += -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
 
 all: $(PROJECT).elf $(PROJECT).bin
 flash: $(PROJECT).flash
+debug: $(PROJECT).debug
 
 # error if not using linker script generator
 ifeq (,$(DEVICE))
@@ -164,14 +165,27 @@ ifeq (,$(OOCD_FILE))
 		$(NULL)
 else
 	$(Q)(echo "halt; program $(realpath $(*).elf) verify reset" | nc -4 localhost 4444 2>/dev/null) || \
-		$(OOCD) -f $(OOCD_FILE) \
+		$(OOCD) -f interface/$(OOCD_INTERFACE).cfg \
+		-f $(OOCD_FILE) \
 		-c "program $(realpath $(*).elf) verify reset exit" \
 		$(NULL)
 endif
 
+%.debug: %.elf
+	@printf "Steps to setup debugger:"
+	@printf "\n"
+	@printf "gdb-multiarch $(realpath $(*).elf)\n"
+	@printf "<gdb> target remote :3333\n"
+	@printf "<gdb> monitor reset halt\n"
+	@printf "<gdb> load\n"
+	@printf "<gdb> monitor reset halt\n"
+	@printf "\n"
+	$(OOCD) -f interface/$(OOCD_INTERFACE).cfg \
+		-f $(OOCD_FILE)
+
 clean:
 	rm -rf $(BUILD_DIR) $(GENERATED_BINS)
 
-.PHONY: all clean flash
+.PHONY: all clean flash debug
 -include $(OBJS:.o=.d)
 

@@ -1,11 +1,31 @@
 #include "main.h"
+#include <libopencm3/stm32/f1/rcc.h>
 
 int main(void) {
 
    init_rcc_configuration();
    while (1);
+   return 0;
 }
 
 void init_rcc_configuration (void)
 {
+   const struct rcc_clock_scale clock =
+   {
+      .pll_source = RCC_CFGR_PLLSRC_HSE_CLK,
+      .pll_mul = RCC_CFGR_PLLMUL_PLL_CLK_MUL6,
+      .usbpre = RCC_CFGR_USBPRE_PLL_CLK_NODIV,
+      .hpre = RCC_CFGR_HPRE_DIV2,
+      .ppre1 = RCC_CFGR_PPRE_NODIV,
+      .ppre2 = RCC_CFGR_PPRE_NODIV,
+      .adcpre = RCC_CFGR_ADCPRE_DIV6,
+      .flash_waitstates = 0,
+
+      .ahb_frequency = 24e6,
+      .apb1_frequency = 24e6,
+      .apb2_frequency = 24e6,
+   };
+
+   rcc_clock_setup_pll(&clock);
+   return;
 }

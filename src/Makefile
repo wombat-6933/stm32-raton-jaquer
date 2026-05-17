@@ -1,9 +1,11 @@
 PROJECT = ratonjaquer
 BUILD_DIR = ../bin
-
 MY_INCLUDE_DIR = ../inc
+
 CFILES = $(wildcard *.c)
-AFILES += $(wildcard *.S)
+AFILES = $(wildcard *.S)
+
+CFLAGS += -g
 
 # TODO - you will need to edit these two lines!
 DEVICE=stm32f103c8t6
