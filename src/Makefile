@@ -5,7 +5,7 @@ MY_INCLUDE_DIR = ../inc
 CFILES = $(wildcard *.c)
 AFILES = $(wildcard *.S)
 
-CFLAGS += -g
+CFLAGS += -g -O0
 
 # TODO - you will need to edit these two lines!
 DEVICE=stm32f103c8t6

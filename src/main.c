@@ -1,10 +1,14 @@
 #include "main.h"
+#include "led.h"
 #include <libopencm3/stm32/f1/rcc.h>
 
 int main(void) {
 
    init_rcc_configuration();
-   while (1);
+   setup_led_debug();
+
+   led_debug_on();
+   while (1) {led_debug_blink_ms(400);}
    return 0;
 }
 
