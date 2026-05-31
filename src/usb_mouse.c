@@ -2,7 +2,10 @@
 //TODO: WAKE_UP SUPPORT
 //TODO: STUDY USB INTERRUPTS AND CLK ENABLES
 
-static const struct usb_device_descriptor rj_dev = {
+static usbd_device * rj_dev_p = 0;
+static uint8_t rj_control_buffer[128];
+
+static const struct usb_device_descriptor rj_device_descriptor = {
 	.bLength = USB_DT_DEVICE_SIZE,
 	.bDescriptorType = USB_DT_DEVICE,
 	.bcdUSB = 0x0200,
@@ -20,12 +23,12 @@ static const struct usb_device_descriptor rj_dev = {
 	.bNumConfigurations = 1,
 };
 
-static const char *usb_strings[] = {
+static const char *rj_strings[N_USB_STRINGS] = {
    "PepeFit Lab.",
    "USB RJ Mouse",
 };
 
-static const struct usb_config_descriptor rj_config = {
+static const struct usb_config_descriptor rj_config_descriptor = {
        .bLength = USB_DT_CONFIGURATION_SIZE,
        .bDescriptorType = USB_DT_CONFIGURATION,
        .wTotalLength = 0, //TODO: Calculate total configuration length in Bytes EP + Interfaces ..
@@ -36,7 +39,7 @@ static const struct usb_config_descriptor rj_config = {
        .bMaxPower = 0x50, //100 mA
 };
 
-static const struct usb_interface_descriptor rj_interface = {
+static const struct usb_interface_descriptor rj_interface_descriptor = {
       .bLength = USB_DT_INTERFACE_SIZE,
       .bDescriptorType = USB_DT_INTERFACE,
       .bInterfaceNumber = 0,
@@ -57,3 +60,9 @@ static const struct usb_hid_descriptor_full rj_hid_descriptor {
 
 };
 
+// ----------- BEGIN DECLS ------------
+
+void usb_rj_init (void)
+{
+   rj_dev_p = usbd_init(&st_usbfs_v1_usb_driver, &rj_device_descriptor, &rj_config_descriptor, rj_strings, N_USB_STRINGS, rj_control_buffer, sizeof(rj_control_buffer));
+}
