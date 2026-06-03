@@ -49,9 +49,14 @@ static const struct usb_interface_descriptor rj_interface_descriptor = {
       .bInterfaceSubClass = USB_HID_SUBCLASS_BOOT_INTERFACE,
       .bInterfaceProtocol = USB_HID_INTERFACE_PROTOCOL_MOUSE,
       .iInterface = 0,
+
+//    .endpoint = &hid_endpoint,
+//    .extra = &hid_function,
+//    .extralen = sizeof(hid_function),
+
 };
 
-static const struct usb_hid_descriptor rj_hid_descriptor {
+static const struct usb_hid_descriptor rj_hid_descriptor = {
       .bLength = USB_HID_DESCRIPTOR_SIZE,
       .bDescriptorType = USB_HID_DT_HID,
       .bcdHID = 0x0111,
@@ -59,14 +64,14 @@ static const struct usb_hid_descriptor rj_hid_descriptor {
       .bNumDescriptors = 1,
 };
 
-static const struct usb_endpoint_descriptor rj_endpoint_descriptor {
+static const struct usb_endpoint_descriptor rj_endpoint_descriptor = {
       .bLength = USB_DT_ENDPOINT_SIZE,
       .bDescriptorType = USB_DT_ENDPOINT,
       .bEndpointAddress = USB_ENDPOINT_ADDR_IN(1),
       .bmAttributes = USB_ENDPOINT_ATTR_INTERRUPT,
       .wMaxPacketSize = 4,
       .bInterval = 10,
-}
+};
 
 static const uint8_t rj_hid_report_descriptor[] = {
 	0x05, 0x01, /* USAGE_PAGE (Generic Desktop)         */
@@ -95,13 +100,13 @@ static const uint8_t rj_hid_report_descriptor[] = {
 	0xc0        /* END_COLLECTION                       */
 };
 
-static const struct usb_complete_hid_descriptor rj_complete_hid_descriptor
+static const struct usb_complete_hid_descriptor rj_complete_hid_descriptor = 
 {
-   rj_hid_descriptor,
-   rj_hid_report_fields =
+   .hid_descriptor_fields = rj_hid_descriptor,
+   .hid_report_fields =
    {
       .bDescriptorType = USB_HID_DT_REPORT,
-      .wDescriptorLength = sizeof(rj_hid_descriptor);
+      .wDescriptorLength = sizeof(rj_hid_descriptor)
    }
 };
 
