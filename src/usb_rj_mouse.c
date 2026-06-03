@@ -1,4 +1,4 @@
-#include "usb_mouse.h"
+#include "usb_rj_mouse.h"
 //TODO: WAKE_UP SUPPORT
 //TODO: STUDY USB INTERRUPTS AND CLK ENABLES
 
@@ -51,13 +51,12 @@ static const struct usb_interface_descriptor rj_interface_descriptor = {
       .iInterface = 0,
 };
 
-static const struct usb_hid_descriptor_full rj_hid_descriptor {
+static const struct usb_hid_descriptor rj_hid_descriptor {
       .bLength = USB_HID_DESCRIPTOR_SIZE,
       .bDescriptorType = USB_HID_DT_HID,
       .bcdHID = 0x0111,
       .bCountryCode = 0,
       .bNumDescriptors = 1,
-
 };
 
 static const struct usb_endpoint_descriptor rj_endpoint_descriptor {
@@ -94,6 +93,16 @@ static const uint8_t rj_hid_report_descriptor[] = {
 	0x81, 0x06, /*     INPUT (Data,Var,Rel)             */
 	0xc0,       /*   END_COLLECTION                     */
 	0xc0        /* END_COLLECTION                       */
+};
+
+static const struct usb_complete_hid_descriptor rj_complete_hid_descriptor
+{
+   rj_hid_descriptor,
+   rj_hid_report_fields =
+   {
+      .bDescriptorType = USB_HID_DT_REPORT,
+      .wDescriptorLength = sizeof(rj_hid_descriptor);
+   }
 };
 
 // ----------- BEGIN DECLS ------------
