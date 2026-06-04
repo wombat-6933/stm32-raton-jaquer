@@ -22,4 +22,5 @@ struct usb_complete_hid_descriptor {
 
 // BEGIN DECLS -----------
 void usb_rj_init (void);
+void usb_rj_poll (void);
 #endif

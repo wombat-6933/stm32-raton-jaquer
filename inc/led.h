@@ -8,6 +8,7 @@
 #include <libopencm3/stm32/f1/gpio.h>
 #include <libopencm3/stm32/f1/rcc.h>
 
+#define ERROR_HALT_BLINK() while (1) {led_debug_blink_ms(400);}
 #define APROX_1_MS 2000 // based on the APB freq = 24MHz
 
 //pc13 gpio embedded in board used as debug led

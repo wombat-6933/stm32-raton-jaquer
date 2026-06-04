@@ -116,3 +116,8 @@ void usb_rj_init (void)
 {
    rj_dev_p = usbd_init(&st_usbfs_v1_usb_driver, &rj_device_descriptor, &rj_config_descriptor, rj_strings, N_USB_STRINGS, rj_control_buffer, sizeof(rj_control_buffer));
 }
+
+void usb_rj_poll (void)
+{
+   usbd_poll(rj_dev_p);
+}

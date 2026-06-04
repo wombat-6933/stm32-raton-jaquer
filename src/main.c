@@ -1,15 +1,17 @@
 #include "main.h"
 #include "led.h"
+#include "usb_rj_mouse.h"
 #include <libopencm3/stm32/f1/rcc.h>
 
 int main(void) {
 
    init_rcc_configuration();
    setup_led_debug();
+   usb_rj_init();
 
-   led_debug_on();
-   while (1) {led_debug_blink_ms(400);}
-   return 0;
+   usb_rj_poll();
+   ERROR_HALT_BLINK();
+   return -1;
 }
 
 void init_rcc_configuration (void)
