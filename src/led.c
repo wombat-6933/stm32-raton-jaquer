@@ -1,5 +1,7 @@
 #include "led.h"
 
+static uint8_t continue_debug = 1;
+
 void setup_led_debug(void)
 {
    //Enable GPIO port C
@@ -26,4 +28,8 @@ void led_debug_blink_ms(uint32_t time_ms)
    led_debug_on();
    for (i = 0; i < wait; i++);
 }
-
+void debug_halt_blink(void)
+{
+   while (continue_debug)
+   {led_debug_blink_ms(400);}
+}
