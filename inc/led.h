@@ -7,6 +7,7 @@
 #include <libopencm3/stm32/f1/memorymap.h>
 #include <libopencm3/stm32/f1/gpio.h>
 #include <libopencm3/stm32/f1/rcc.h>
+#include <libopencm3/cm3/assert.h>
 
 #define ERROR_HALT_BLINK() while (1) {led_debug_blink_ms(400);}
 #define DEBUG_HALT_BLINK() debug_halt_blink()

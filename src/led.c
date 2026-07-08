@@ -33,3 +33,8 @@ void debug_halt_blink(void)
    while (continue_debug)
    {led_debug_blink_ms(400);}
 }
+
+void cm3_assert_failed(void)
+{
+   ERROR_HALT_BLINK();
+}

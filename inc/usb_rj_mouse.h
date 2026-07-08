@@ -10,6 +10,7 @@
 #define TEST_PID 0x1
 #define N_USB_STRINGS 2
 #define USB_HID_DESCRIPTOR_SIZE 9
+#define USB_QUALIFIER_DESCRIPTOR_SIZE 10
 
 struct usb_hid_report_fields {
    uint8_t bDescriptorType;
@@ -20,6 +21,18 @@ struct usb_complete_hid_descriptor {
    struct usb_hid_descriptor hid_descriptor_fields;
    struct usb_hid_report_fields hid_report_fields;
 } __attribute__((packed));
+
+struct usb_qualifier_descriptor {
+   uint8_t bLength;
+   uint8_t bDescriptorType;
+   uint16_t bcdUSB;
+   uint8_t bDeviceClass;
+   uint8_t bDeviceSubClass;
+   uint8_t bDeviceProtocol;
+   uint8_t bMaxPacketSize0;
+   uint8_t bNumConfigurations;
+   uint8_t bReserved;
+}__attribute__((packed));
 
 
 // BEGIN DECLS -----------

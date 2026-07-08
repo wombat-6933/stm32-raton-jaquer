@@ -1,4 +1,6 @@
+#include "led.h"
 #include "usb_rj_mouse.h"
+#include <string.h>
 //TODO: WAKE_UP SUPPORT
 //TODO: STUDY USB INTERRUPTS AND CLK ENABLES
 
@@ -121,6 +123,18 @@ static const uint8_t rj_hid_report_descriptor[] = {
 	0xc0        /* END_COLLECTION                       */
 };
 
+static const struct usb_qualifier_descriptor rj_qualifier_desc = 
+{
+   .bLength = sizeof(struct usb_qualifier_descriptor),
+   .bDescriptorType = USB_DT_DEVICE_QUALIFIER,
+   .bcdUSB = 0x0200,
+   .bDeviceClass = 0,
+   .bDeviceSubClass = 0,
+   .bDeviceProtocol = 0,
+   .bMaxPacketSize0 = 8,
+   .bNumConfigurations = 0,
+   .bReserved = 0,
+};
 
 // ----------- BEGIN DECLS ------------
 
@@ -129,6 +143,11 @@ void usb_rj_init (void)
    rj_dev_p = usbd_init(&st_usbfs_v1_usb_driver, &rj_device_descriptor, &rj_config_descriptor, rj_strings, N_USB_STRINGS, rj_control_buffer, sizeof(rj_control_buffer));
 
    usbd_register_set_config_callback(rj_dev_p, rj_config_setup);
+   usbd_register_control_callback(
+		       rj_dev_p,
+		       USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
+		       USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
+		       rj_qualifier_control_request);
 }
 
 void usb_rj_poll (void)
@@ -149,11 +168,6 @@ static void rj_config_setup (usbd_device *dev, uint16_t wValue)
 		       USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_INTERFACE,
 		       USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
 		       rj_hid_control_request);
-   usbd_register_control_callback(
-		       dev,
-		       USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
-		       USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
-		       rj_qualifier_control_request);
 }
 
 static enum usbd_request_return_codes rj_hid_control_request(usbd_device *dev, struct usb_setup_data *req, uint8_t **buf, uint16_t *len,
@@ -182,6 +196,8 @@ static enum usbd_request_return_codes rj_qualifier_control_request(usbd_device *
 
       if ((usb_descriptor_type(req->wValue)) == USB_DT_DEVICE_QUALIFIER)
       {
+	 memcpy(*buf, &rj_qualifier_desc, sizeof(struct usb_qualifier_descriptor));
+	 *len = sizeof(struct usb_qualifier_descriptor);
 	 return USBD_REQ_HANDLED;
       }
 
