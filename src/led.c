@@ -36,5 +36,5 @@ void debug_halt_blink(void)
 
 void cm3_assert_failed(void)
 {
-   ERROR_HALT_BLINK();
+   debug_halt_blink();
 }

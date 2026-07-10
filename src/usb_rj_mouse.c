@@ -41,19 +41,28 @@ static const char *rj_strings[N_USB_STRINGS] = {
    "USB RJ Mouse",
 };
 
-static const struct usb_config_descriptor rj_config_descriptor = {
-       .bLength = USB_DT_CONFIGURATION_SIZE,
-       .bDescriptorType = USB_DT_CONFIGURATION,
-       .wTotalLength = (USB_DT_CONFIGURATION_SIZE + USB_DT_INTERFACE_SIZE + USB_HID_DESCRIPTOR_SIZE + USB_DT_ENDPOINT_SIZE),
-       .bNumInterfaces = 1,
-       .bConfigurationValue = 1,
-       .iConfiguration = 0,
-       .bmAttributes = USB_CONFIG_ATTR_DEFAULT | USB_CONFIG_ATTR_REMOTE_WAKEUP,
-       .bMaxPower = 0x50, //100 mA
+static const struct usb_config_descriptor rj_config_descriptor [] = {{
+   .bLength = USB_DT_CONFIGURATION_SIZE,
+      .bDescriptorType = USB_DT_CONFIGURATION,
+      .wTotalLength = (USB_DT_CONFIGURATION_SIZE + USB_DT_INTERFACE_SIZE + USB_HID_DESCRIPTOR_SIZE + USB_DT_ENDPOINT_SIZE),
+      .bNumInterfaces = 1,
+      .bConfigurationValue = 1,
+      .iConfiguration = 0,
+      .bmAttributes = USB_CONFIG_ATTR_DEFAULT | USB_CONFIG_ATTR_REMOTE_WAKEUP,
+      .bMaxPower = 0x50, //100 mA
+      .interface = rj_ifaces,
+}};
+
+static const struct usb_interface rj_ifaces[] = {
+	{
+		.num_altsetting = 1,
+		.iface_assoc = NULL,
+		.altsetting = rj_interface_descriptor,
+	},
 };
 
-static const struct usb_interface_descriptor rj_interface_descriptor = {
-      .bLength = USB_DT_INTERFACE_SIZE,
+static const struct usb_interface_descriptor rj_interface_descriptor [] = {{
+   .bLength = USB_DT_INTERFACE_SIZE,
       .bDescriptorType = USB_DT_INTERFACE,
       .bInterfaceNumber = 0,
       .bAlternateSetting = 0,
@@ -63,11 +72,11 @@ static const struct usb_interface_descriptor rj_interface_descriptor = {
       .bInterfaceProtocol = USB_HID_INTERFACE_PROTOCOL_MOUSE,
       .iInterface = 0,
 
-//    .endpoint = &hid_endpoint,
+      .endpoint = rj_endpoint_descriptor,
       .extra = &rj_complete_hid_descriptor,
       .extralen = sizeof(rj_complete_hid_descriptor),
 
-};
+}};
 
 static const struct usb_hid_descriptor rj_hid_descriptor = {
       .bLength = USB_HID_DESCRIPTOR_SIZE,
@@ -87,14 +96,14 @@ static const struct usb_complete_hid_descriptor rj_complete_hid_descriptor =
    }
 };
 
-static const struct usb_endpoint_descriptor rj_endpoint_descriptor = {
+static const struct usb_endpoint_descriptor rj_endpoint_descriptor [] = {{
       .bLength = USB_DT_ENDPOINT_SIZE,
       .bDescriptorType = USB_DT_ENDPOINT,
       .bEndpointAddress = USB_ENDPOINT_ADDR_IN(1),
       .bmAttributes = USB_ENDPOINT_ATTR_INTERRUPT,
       .wMaxPacketSize = 4,
       .bInterval = 50,
-};
+}};
 
 static const uint8_t rj_hid_report_descriptor[] = {
 	0x05, 0x01, /* USAGE_PAGE (Generic Desktop)         */
@@ -140,7 +149,7 @@ static const struct usb_qualifier_descriptor rj_qualifier_desc =
 
 void usb_rj_init (void)
 {
-   rj_dev_p = usbd_init(&st_usbfs_v1_usb_driver, &rj_device_descriptor, &rj_config_descriptor, rj_strings, N_USB_STRINGS, rj_control_buffer, sizeof(rj_control_buffer));
+   rj_dev_p = usbd_init(&st_usbfs_v1_usb_driver, &rj_device_descriptor, rj_config_descriptor, rj_strings, N_USB_STRINGS, rj_control_buffer, sizeof(rj_control_buffer));
 
    usbd_register_set_config_callback(rj_dev_p, rj_config_setup);
    usbd_register_control_callback(
