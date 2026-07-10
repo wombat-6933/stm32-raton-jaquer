@@ -7,6 +7,8 @@
 static usbd_device * rj_dev_p = 0;
 static uint8_t rj_control_buffer[128];
 static const struct usb_complete_hid_descriptor rj_complete_hid_descriptor;
+static const struct usb_endpoint_descriptor rj_endpoint_descriptor [];
+static const struct usb_interface rj_ifaces[];
 static void rj_config_setup (usbd_device *dev, uint16_t wValue);
 static enum usbd_request_return_codes rj_qualifier_control_request(usbd_device *dev, struct usb_setup_data *req, uint8_t **buf, uint16_t *len,
 			void (**complete)(usbd_device *, struct usb_setup_data *));
@@ -53,14 +55,6 @@ static const struct usb_config_descriptor rj_config_descriptor [] = {{
       .interface = rj_ifaces,
 }};
 
-static const struct usb_interface rj_ifaces[] = {
-	{
-		.num_altsetting = 1,
-		.iface_assoc = NULL,
-		.altsetting = rj_interface_descriptor,
-	},
-};
-
 static const struct usb_interface_descriptor rj_interface_descriptor [] = {{
    .bLength = USB_DT_INTERFACE_SIZE,
       .bDescriptorType = USB_DT_INTERFACE,
@@ -78,22 +72,20 @@ static const struct usb_interface_descriptor rj_interface_descriptor [] = {{
 
 }};
 
+static const struct usb_interface rj_ifaces[] = {
+	{
+		.num_altsetting = 1,
+		.iface_assoc = NULL,
+		.altsetting = rj_interface_descriptor,
+	},
+};
+
 static const struct usb_hid_descriptor rj_hid_descriptor = {
       .bLength = USB_HID_DESCRIPTOR_SIZE,
       .bDescriptorType = USB_HID_DT_HID,
       .bcdHID = 0x0111,
       .bCountryCode = 0,
       .bNumDescriptors = 1,
-};
-
-static const struct usb_complete_hid_descriptor rj_complete_hid_descriptor = 
-{
-   .hid_descriptor_fields = rj_hid_descriptor,
-   .hid_report_fields =
-   {
-      .bDescriptorType = USB_HID_DT_REPORT,
-      .wDescriptorLength = sizeof(rj_hid_descriptor)
-   }
 };
 
 static const struct usb_endpoint_descriptor rj_endpoint_descriptor [] = {{
@@ -130,6 +122,16 @@ static const uint8_t rj_hid_report_descriptor[] = {
 	0x81, 0x06, /*     INPUT (Data,Var,Rel)             */
 	0xc0,       /*   END_COLLECTION                     */
 	0xc0        /* END_COLLECTION                       */
+};
+
+static const struct usb_complete_hid_descriptor rj_complete_hid_descriptor = 
+{
+   .hid_descriptor_fields = rj_hid_descriptor,
+   .hid_report_fields =
+   {
+      .bDescriptorType = USB_HID_DT_REPORT,
+      .wDescriptorLength = ARRAY_LENGTH(rj_hid_report_descriptor),
+   }
 };
 
 static const struct usb_qualifier_descriptor rj_qualifier_desc = 
