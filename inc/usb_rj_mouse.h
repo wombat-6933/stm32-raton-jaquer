@@ -37,5 +37,5 @@ struct usb_qualifier_descriptor {
 
 // BEGIN DECLS -----------
 void usb_rj_init (void);
-void usb_rj_poll (void);
+void usb_rj_run (void);
 #endif

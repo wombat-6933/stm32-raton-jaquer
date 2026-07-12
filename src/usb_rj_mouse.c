@@ -6,6 +6,7 @@
 
 static usbd_device * rj_dev_p = 0;
 static uint8_t rj_control_buffer[128];
+static uint8_t hid_report_desc_sent = 0;
 static const struct usb_complete_hid_descriptor rj_complete_hid_descriptor;
 static const struct usb_endpoint_descriptor rj_endpoint_descriptor [];
 static const struct usb_interface rj_ifaces[];
@@ -159,11 +160,43 @@ void usb_rj_init (void)
 		       USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
 		       USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
 		       rj_qualifier_control_request);
+
+   while (!hid_report_desc_sent)
+      usbd_poll(rj_dev_p);
+   led_debug_off();
 }
 
-void usb_rj_poll (void)
+static void send_button_click(uint8_t *button_status)
 {
-   usbd_poll(rj_dev_p);
+   uint8_t buf[4] = {0};
+   if (*button_status)
+   {
+      *button_status = 0;
+      buf[0] = 2;
+   }
+   else
+   {
+      *button_status = 1;
+      buf[0] = 0;
+   }
+   
+   usbd_ep_write_packet(rj_dev_p, USB_ENDPOINT_ADDR_IN(1), buf, 4);
+
+}
+void usb_rj_run (void)
+{   
+   uint32_t time_ms = 1800;
+   uint32_t wait = time_ms * APROX_1_MS;
+   uint32_t i = 0;
+   uint8_t button_status = 0;
+
+   while (1)
+   {
+      for (i = 0; i < wait; i++)
+	 usbd_poll(rj_dev_p);
+
+      send_button_click(&button_status);
+   }
 }
 
 static void rj_config_setup (usbd_device *dev, uint16_t wValue)
@@ -195,6 +228,8 @@ static enum usbd_request_return_codes rj_hid_control_request(usbd_device *dev, s
 	/* Handle the HID report descriptor. */
 	*buf = (uint8_t *)rj_hid_report_descriptor;
 	*len = sizeof(rj_hid_report_descriptor);
+
+	hid_report_desc_sent = 1;
 
 	return USBD_REQ_HANDLED;
 }

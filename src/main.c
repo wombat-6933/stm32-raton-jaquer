@@ -9,9 +9,7 @@ int main(void) {
    setup_led_debug();
    usb_rj_init();
 
-   while(1) {
-      usb_rj_poll();
-   }
+   usb_rj_run();
    ERROR_HALT_BLINK();
    return -1;
 }
