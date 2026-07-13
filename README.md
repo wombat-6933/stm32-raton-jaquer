@@ -1,7 +1,7 @@
 # Description
-"El raton jaquer" is a solution to keep yourself always aviable in Teams and all that unhealthy corporative stuff. 
+"El raton jaquer" is a solution to keep yourself always available in Teams and all that unhealthy corporative stuff. 
 Raton jaquer presents to your PC as a regular mouse and sends moving actions automatically.
-The name comes from a prank that we used to make our partners in school, connecting a stealth mouse or keyboard to the victim PC and moving it causing confusion.
+The name comes from a prank that we used to make our partners in school, connecting a mouse or keyboard stealthy to the victim PC and moving it causing confusion.
 
 # Instructions
  1. git clone --recurse-submodules https://github.com/wombat-6933/stm32-raton-jaquer.git
