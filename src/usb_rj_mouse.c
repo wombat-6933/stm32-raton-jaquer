@@ -6,9 +6,10 @@
 
 static usbd_device * rj_dev_p = 0;
 static uint8_t rj_control_buffer[128];
+static uint8_t rj_mouse_data_buf[MOUSE_DATA_BUF_SIZE] = {0};
 static uint8_t hid_report_desc_sent = 0;
 static const struct usb_complete_hid_descriptor rj_complete_hid_descriptor;
-static const struct usb_endpoint_descriptor rj_endpoint_descriptor [];
+static const struct usb_endpoint_descriptor rj_endpoint_descriptor[];
 static const struct usb_interface rj_ifaces[];
 static void rj_config_setup (usbd_device *dev, uint16_t wValue);
 static enum usbd_request_return_codes rj_qualifier_control_request(usbd_device *dev, struct usb_setup_data *req, uint8_t **buf, uint16_t *len,
@@ -135,9 +136,9 @@ static const struct usb_complete_hid_descriptor rj_complete_hid_descriptor =
    }
 };
 
-static const struct usb_qualifier_descriptor rj_qualifier_desc = 
+static const struct usb_device_qualifier_descriptor rj_qualifier_desc = 
 {
-   .bLength = sizeof(struct usb_qualifier_descriptor),
+   .bLength = sizeof(struct usb_device_qualifier_descriptor),
    .bDescriptorType = USB_DT_DEVICE_QUALIFIER,
    .bcdUSB = 0x0200,
    .bDeviceClass = 0,
@@ -185,14 +186,12 @@ static void send_button_click(uint8_t *button_status)
 }
 void usb_rj_run (void)
 {   
-   uint32_t time_ms = 1800;
-   uint32_t wait = time_ms * APROX_1_MS;
    uint32_t i = 0;
    uint8_t button_status = 0;
 
    while (1)
    {
-      for (i = 0; i < wait; i++)
+      for (i = 0; i < 4e6; i++)
 	 usbd_poll(rj_dev_p);
 
       send_button_click(&button_status);
@@ -242,8 +241,8 @@ static enum usbd_request_return_codes rj_qualifier_control_request(usbd_device *
 
       if ((usb_descriptor_type(req->wValue)) == USB_DT_DEVICE_QUALIFIER)
       {
-	 memcpy(*buf, &rj_qualifier_desc, sizeof(struct usb_qualifier_descriptor));
-	 *len = sizeof(struct usb_qualifier_descriptor);
+	 memcpy(*buf, &rj_qualifier_desc, sizeof(struct usb_device_qualifier_descriptor));
+	 *len = sizeof(struct usb_device_qualifier_descriptor);
 	 return USBD_REQ_HANDLED;
       }
 

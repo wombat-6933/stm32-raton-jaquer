@@ -1,18 +1,16 @@
-Easy "clone and go" repository for a libopencm3 based project.
+# Description
+"El raton jaquer" is a solution to keep yourself always aviable in Teams and all that unhealthy corporative stuff. 
+Raton jaquer presents to your PC as a regular mouse and sends moving actions automatically.
+The name comes from a prank that we used to make our partners in school, connecting a stealth mouse or keyboard to the victim PC and moving it causing confusion.
 
 # Instructions
- 1. git clone --recurse-submodules https://github.com/libopencm3/libopencm3-template.git your-project
- 2. cd your-project
- 3. make -C libopencm3 # (Only needed once)
- 4. make -C my-project
+ 1. git clone --recurse-submodules https://github.com/wombat-6933/stm32-raton-jaquer.git
+ 2. cd stm32f103-raton-jaquer
+ 3. make -C libopencm3
+ 4. cd src/
+ 5. make
+ 6. make flash
 
-If you have an older git, or got ahead of yourself and skipped the ```--recurse-submodules```
-you can fix things by running ```git submodule update --init``` (This is only needed once)
-
-# Directories
-* my-project contains your application
-* my-common-code contains something shared.
-
-# As a template
-You should replace this with your _own_ README if you are using this
-as a template.
+# Hardware needed
+ 1. Supported STM32 board (check makefiles). By default stm32f103c8t6 is used
+ 2. Programmer for STM32. By default ST-Link V2 is used.
