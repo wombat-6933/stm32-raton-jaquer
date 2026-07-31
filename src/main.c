@@ -6,10 +6,15 @@
 int main(void) {
 
    init_rcc_configuration();
+   random_init();
    setup_led_debug();
+   led_debug_on();
    usb_rj_init();
 
+   random_generate_seed();
+
    usb_rj_run();
+
    ERROR_HALT_BLINK();
    return -1;
 }
