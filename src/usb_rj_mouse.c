@@ -1,8 +1,7 @@
-#include "led.h"
 #include "usb_rj_mouse.h"
+#include "led.h"
+#include "random.h"
 #include <string.h>
-//TODO: WAKE_UP SUPPORT
-//TODO: STUDY USB INTERRUPTS AND CLK ENABLES
 
 static usbd_device * rj_dev_p = 0;
 static uint8_t rj_control_buffer[128];
@@ -186,14 +185,22 @@ static void send_button_click(uint8_t *button_status)
 }
 void usb_rj_run (void)
 {   
-   uint32_t i = 0;
+   uint32_t i, wait_random = 0;
+   uint16_t rnum = 0;
    uint8_t button_status = 0;
 
    while (1)
    {
+      //wait for a fixed minimum time (aprox 8s)
       for (i = 0; i < 4e6; i++)
 	 usbd_poll(rj_dev_p);
+      //add random wait time
+      rnum = random_generate_number();
+      wait_random = (rnum << 5);
+      for (i = 0; i < wait_random; i++)
+	 usbd_poll(rj_dev_p);
 
+      //send action
       send_button_click(&button_status);
    }
 }

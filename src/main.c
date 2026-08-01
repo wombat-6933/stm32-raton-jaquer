@@ -1,6 +1,7 @@
 #include "main.h"
 #include "led.h"
 #include "usb_rj_mouse.h"
+#include "random.h"
 #include <libopencm3/stm32/f1/rcc.h>
 
 int main(void) {
@@ -9,6 +10,7 @@ int main(void) {
    random_init();
    setup_led_debug();
    led_debug_on();
+
    usb_rj_init();
 
    random_generate_seed();
