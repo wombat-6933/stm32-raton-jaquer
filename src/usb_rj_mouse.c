@@ -185,7 +185,7 @@ static void send_button_click(uint8_t *button_status)
 }
 void usb_rj_run (void)
 {   
-   uint32_t i, wait_random = 0;
+   uint32_t i, j, wait_random = 0;
    uint16_t rnum = 0;
    uint8_t button_status = 0;
 
@@ -194,11 +194,14 @@ void usb_rj_run (void)
       //wait for a fixed minimum time (aprox 8s)
       for (i = 0; i < 4e6; i++)
 	 usbd_poll(rj_dev_p);
-      //add random wait time
-      rnum = random_generate_number();
-      wait_random = (rnum << 5);
-      for (i = 0; i < wait_random; i++)
-	 usbd_poll(rj_dev_p);
+      //add random wait time N times
+      for (j = 0; j < 8; j++)
+      {
+	 rnum = random_generate_number();
+	 wait_random = (rnum << 5);
+	 for (i = 0; i < wait_random; i++)
+	    usbd_poll(rj_dev_p);
+      }
 
       //send action
       send_button_click(&button_status);
