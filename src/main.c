@@ -9,9 +9,10 @@ int main(void) {
    init_rcc_configuration();
    random_init();
    setup_led_debug();
-   led_debug_on();
 
+   led_debug_on();
    usb_rj_init();
+   led_debug_off();
 
    random_generate_seed();
 

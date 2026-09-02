@@ -163,7 +163,6 @@ void usb_rj_init (void)
 
    while (!hid_report_desc_sent)
       usbd_poll(rj_dev_p);
-   led_debug_off();
 }
 
 static void send_button_click(uint8_t *button_status)
@@ -193,17 +192,25 @@ void usb_rj_run (void)
    {
       //wait for a fixed minimum time (aprox 8s)
       for (i = 0; i < 4e6; i++)
-	 usbd_poll(rj_dev_p);
+         usbd_poll(rj_dev_p);
       //add random wait time N times
       for (j = 0; j < 8; j++)
       {
-	 rnum = random_generate_number();
-	 wait_random = (rnum << 5);
-	 for (i = 0; i < wait_random; i++)
-	    usbd_poll(rj_dev_p);
+         rnum = random_generate_number();
+         wait_random = (rnum << 5);
+         for (i = 0; i < wait_random; i++)
+            usbd_poll(rj_dev_p);
       }
 
       //send action
+      send_button_click(&button_status);
+
+       rnum = random_generate_number();
+       wait_random = (rnum << 2);
+       for (i = 0; i < wait_random; i++)
+          usbd_poll(rj_dev_p);
+
+      //send action release
       send_button_click(&button_status);
    }
 }
